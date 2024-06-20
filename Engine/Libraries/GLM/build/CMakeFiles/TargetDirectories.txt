@@ -1,0 +1,2 @@
+C:/Users/Adreonyx/Desktop/Stuff/CPP Libraries/GLM/build/CMakeFiles/ALL_BUILD.dir
+C:/Users/Adreonyx/Desktop/Stuff/CPP Libraries/GLM/build/CMakeFiles/ZERO_CHECK.dir

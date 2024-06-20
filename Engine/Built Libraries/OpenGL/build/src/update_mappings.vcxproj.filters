@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Adreonyx\Desktop\Stuff\OpenGL\build\CMakeFiles\1b00a9cea32f3f6a4438109f6d0adcdb\update_mappings.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\Adreonyx\Desktop\Stuff\OpenGL\glfw-3.4\src\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="C:\Users\Adreonyx\Desktop\Stuff\OpenGL\glfw-3.4\src\mappings.h.in">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="C:\Users\Adreonyx\Desktop\Stuff\OpenGL\glfw-3.4\CMake\GenerateMappings.cmake" />
+    <None Include="C:\Users\Adreonyx\Desktop\Stuff\OpenGL\build\src\CMakeFiles\update_mappings" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{6E6DE88D-177F-3354-8127-C7D5FDB47313}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{2E99E8D2-FECC-3EE7-BE44-A0266B60ACF1}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
