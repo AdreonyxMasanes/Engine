@@ -61,6 +61,9 @@
     <ClInclude Include="Headers\enums.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Headers\objectManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\main.cpp">
@@ -88,6 +91,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Src\vbo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\objectManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

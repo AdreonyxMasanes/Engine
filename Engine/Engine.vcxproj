@@ -143,6 +143,7 @@
     <ClInclude Include="Headers\ebo.h" />
     <ClInclude Include="Headers\enums.h" />
     <ClInclude Include="Headers\object.h" />
+    <ClInclude Include="Headers\objectManager.h" />
     <ClInclude Include="Headers\shader.h" />
     <ClInclude Include="Headers\texture.h" />
     <ClInclude Include="Headers\vao.h" />
@@ -153,6 +154,7 @@
     <ClCompile Include="Src\glad.c" />
     <ClCompile Include="Src\main.cpp" />
     <ClCompile Include="Src\object.cpp" />
+    <ClCompile Include="Src\objectManager.cpp" />
     <ClCompile Include="Src\shader.cpp" />
     <ClCompile Include="Src\stb.cpp" />
     <ClCompile Include="Src\texture.cpp" />

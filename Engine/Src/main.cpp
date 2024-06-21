@@ -14,19 +14,17 @@
 #include <ebo.h>
 #include <object.h>
 #include <enums.h>
-
+#include <objectManager.h>
 
 
 void framebufferSizeCallbackFunction(GLFWwindow* window, int width, int height);
-void processInput(GLFWwindow* window);
-void changeSelected(SELECTION_DIRECTION dir);
+void processInput(GLFWwindow* window, objectManager manager);
+void changeSelected(SELECTION_DIRECTION dir, objectManager manager);
 
 const int WINDOW_WIDTH = 800;
 const int WINDOW_HEIGHT = 600;
-
+const int totalObjectsToCreate = 2;
 const char* TITLE = "OPENGL SAMPLE";
-
-std::vector<std::shared_ptr<object>> objects;
 
 float deltaTime = 0.0f;	// time between current frame and last frame
 float lastFrame = 0.0f;
@@ -103,6 +101,9 @@ int main()
 {
 	srand(time(NULL));
 
+	objectManager m_manager;
+
+
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -136,16 +137,17 @@ int main()
 	texture crateTexture("Resource Files/Textures/CRATE.png");
 
 	
-	for (int i = 0; i < 2; i++)
+
+	for (int i = 0; i < totalObjectsToCreate; i++)
 	{
-		std::shared_ptr<object> obj(new object(shaderProgram, i));
+		std::string tag = "test";
 		if (i == 0)
 		{
-			obj->isSelected = true;
-			selectedObject = obj;
+			selectedObject = m_manager.addObject(shaderProgram, tag);
+			selectedObject->isSelected = true;
+			continue;
 		}
-		objects.push_back(obj);
-
+		m_manager.addObject(shaderProgram, tag);
 	}
 
 	glEnable(GL_DEPTH_TEST);
@@ -157,17 +159,16 @@ int main()
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
 
-		processInput(window);
+		processInput(window, m_manager);
 		glClearColor(0.5f, 0.5f, 0.8f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
 
 
 		VAO.bind();
-		for (std::shared_ptr<object> obj : objects)
-		{
-			// CHECKS ITS SELF. SHOULD MAKE MANAGER AND USE IDS TO PREVENT
-			
+		m_manager.update();
+		for (std::shared_ptr<object> obj : m_manager.getObjects())
+		{	
 			obj->draw();
 		}
 
@@ -188,7 +189,7 @@ void framebufferSizeCallbackFunction(GLFWwindow* window, int width, int height)
 
 // TODO WHY DOESNT ONE GET SELECTED AND EVENTURALLY FRAMECOUNT WILL CRASH THE PROGRAM
 
-void processInput(GLFWwindow* window)
+void processInput(GLFWwindow* window, objectManager manager)
 {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 	{
@@ -200,11 +201,11 @@ void processInput(GLFWwindow* window)
 	{
 		if (isTransforming)
 		{
-			selectedObject->translateObj(deltaTime, DIRECTION::DIRECTION_LEFT, objects);
+			manager.translateObj(deltaTime, DIRECTION::DIRECTION_LEFT, selectedObject);
 		}
 		else
 		{
-			changeSelected(SELECTION_DIRECTION::SELECTION_LEFT);
+			changeSelected(SELECTION_DIRECTION::SELECTION_LEFT, manager);
 		}
 		
 	}
@@ -214,11 +215,11 @@ void processInput(GLFWwindow* window)
 	{
 		if (isTransforming)
 		{
-			selectedObject->translateObj(deltaTime, DIRECTION::DIRECTION_RIGHT, objects);
+			manager.translateObj(deltaTime, DIRECTION::DIRECTION_RIGHT, selectedObject);
 		}
 		else
 		{
-			changeSelected(SELECTION_DIRECTION::SELECTION_RIGHT);
+			changeSelected(SELECTION_DIRECTION::SELECTION_RIGHT, manager);
 		}
 	}
 
@@ -235,7 +236,7 @@ void processInput(GLFWwindow* window)
 				break;
 				case TRANSFORM::TRANSFORM_TRANSLATING:
 				{
-					selectedObject->translateObj(deltaTime, DIRECTION::DIRECTION_BACK, objects);
+					manager.translateObj(deltaTime, DIRECTION::DIRECTION_BACK, selectedObject);
 				}
 				break;
 			}
@@ -255,7 +256,7 @@ void processInput(GLFWwindow* window)
 				break;
 				case TRANSFORM::TRANSFORM_TRANSLATING:
 				{
-					selectedObject->translateObj(deltaTime, DIRECTION::DIRECTION_FORWARD, objects);
+					manager.translateObj(deltaTime, DIRECTION::DIRECTION_FORWARD, selectedObject);
 				}
 				break;
 			}
@@ -279,7 +280,7 @@ void processInput(GLFWwindow* window)
 	{
 		if (isTransforming)
 		{
-			selectedObject->translateObj(deltaTime, DIRECTION::DIRECTION_UP, objects);
+			manager.translateObj(deltaTime, DIRECTION::DIRECTION_UP, selectedObject);
 		}
 	}
 
@@ -287,7 +288,7 @@ void processInput(GLFWwindow* window)
 	{
 		if (isTransforming)
 		{
-			selectedObject->translateObj(deltaTime, DIRECTION::DIRECTION_DOWN, objects);
+			manager.translateObj(deltaTime, DIRECTION::DIRECTION_DOWN, selectedObject);
 		}
 	}
 
@@ -335,7 +336,7 @@ void processInput(GLFWwindow* window)
 	*/
 }
 
-void changeSelected(SELECTION_DIRECTION dir)
+void changeSelected(SELECTION_DIRECTION dir, objectManager manager)
 {
 	switch (dir)
 	{
@@ -344,21 +345,21 @@ void changeSelected(SELECTION_DIRECTION dir)
 			if (totalFrames - lastKeyInputFrame > 60)
 			{
 				lastKeyInputFrame, totalFrames = 0;
-				for (int i = 0; i < objects.size(); i++)
+				for (int i = 0; i < manager.getObjects().size(); i++)
 				{
-					if (objects[i]->isSelected == true)
+					if (manager.getObjects()[i]->isSelected == true)
 					{
-						if (i == objects.size() - 1)
+						if (i == manager.getObjects().size() - 1)
 						{
-							objects[i]->isSelected = false;
-							objects[0]->isSelected = true;
-							selectedObject = objects[0];
+							manager.getObjects()[i]->isSelected = false;
+							manager.getObjects()[0]->isSelected = true;
+							selectedObject = manager.getObjects()[0];
 						}
 						else
 						{
-							objects[i]->isSelected = false;
-							objects[i + 1]->isSelected = true;
-							selectedObject = objects[i + 1];
+							manager.getObjects()[i]->isSelected = false;
+							manager.getObjects()[i + 1]->isSelected = true;
+							selectedObject = manager.getObjects()[i + 1];
 						}
 						break;
 					}
@@ -372,21 +373,21 @@ void changeSelected(SELECTION_DIRECTION dir)
 			if (totalFrames - lastKeyInputFrame > 60)
 			{
 				lastKeyInputFrame, totalFrames = 0;
-				for (int i = 0; i < objects.size(); i++)
+				for (int i = 0; i < manager.getObjects().size(); i++)
 				{
-					if (objects[i]->isSelected == true)
+					if (manager.getObjects()[i]->isSelected == true)
 					{
 						if (i == 0)
 						{
-							objects[i]->isSelected = false;
-							objects[objects.size() - 1]->isSelected = true;
-							selectedObject = objects[i];
+							manager.getObjects()[i]->isSelected = false;
+							manager.getObjects()[manager.getObjects().size() - 1]->isSelected = true;
+							selectedObject = manager.getObjects()[i];
 						}
 						else
 						{
-							objects[i]->isSelected = false;
-							objects[i - 1]->isSelected = true;
-							selectedObject = objects[i - 1];
+							manager.getObjects()[i]->isSelected = false;
+							manager.getObjects()[i - 1]->isSelected = true;
+							selectedObject = manager.getObjects()[i - 1];
 						}
 						// Breaks from loop after finding the selected one.
 						break;

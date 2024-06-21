@@ -19,21 +19,28 @@ public:
 	glm::mat4 proj = glm::mat4(1.0f);
 	glm::mat4 view = glm::mat4(1.0f);
 	glm::mat4 model = glm::mat4(1.0f);
-	float r, g, b, x, y, z;
+
 	// change to isVERB TODO:
-	// CHANGE TO ENUMS ACTUALLY TODO:
 	TRANSFORM state = TRANSFORM::TRANSFORM_IDLE;
-	bool isSelected = false;
+
+	float r, g, b, x, y, z;
 	float moveSpeed = 1.5f;
 	float velocity = 0;
 	float scale = 0.2f;
-	int id;
 	float mass;
+	std::string m_tag;
+
+	int id;
+
+	bool isSelected = false;
+	bool shouldBeRemoved = false;
+
+	DIRECTION lastDirection;
 
 
 
 public:
-	object(shader defualtShader, int ID);
+	object(shader defualtShader, int ID, std::string& tag);
 	object();
 	void translateObj(float deltaTime, DIRECTION dir, std::vector<std::shared_ptr<object>>& objects);
 	void draw();
@@ -47,6 +54,5 @@ private:
 	bool reversing = false;
 	shader m_defaultShader;
 	void selection(unsigned int colorLoc);
-	bool checkCollisions(std::shared_ptr<object> objTwo);
-	void resolveCollision(std::shared_ptr<object> objTwo);
+
 };

@@ -2,7 +2,7 @@
 
 //TODO: MAKE MANAGER
 //TODO: PREVENT FROM SPAWNING INSIDE OF EACH OTHER
-object::object(shader defaultShader, int ID)
+object::object(shader defaultShader, int ID, std::string& tag)
 {
 	m_defaultShader = defaultShader;
 	// MAKE INTO A VECTOR TODO:
@@ -22,6 +22,7 @@ object::object(shader defaultShader, int ID)
 	color = glm::vec3(r, g, b);
 	selectedColor = color;
 	id = ID;
+	m_tag = tag;
 
 }
 
@@ -37,7 +38,7 @@ object::object()
 	g = randomFloat(-0.5f, 0.5f);
 	b = randomFloat(-0.5f, 0.5f);
 
-	mass = randomFloat(0.0f, 5.0f);
+	mass = randomFloat(10.0f, 50.0f);
 
 	color = glm::vec3(r, g, b);
 	selectedColor = color;
@@ -91,17 +92,6 @@ void object::scaleObj(float deltaTime, DIRECTION dir)
 	}
 }
 
-bool object::checkCollisions(std::shared_ptr<object> objTwo)
-{
-	return(
-		x <= objTwo->x + 1.0f &&
-		x + 1.0f >= objTwo->x &&
-		y <= objTwo->y + 1.0f &&
-		y + 1.0f >= objTwo->y &&
-		z <= objTwo->z + 0.5f &&
-		z + 0.5f >= objTwo->z
-		);
-}
 
 float object::randomFloat(float a, float b)
 {
@@ -141,146 +131,3 @@ void object::selection(unsigned int colorLoc)
 	}
 }
 
-void object::resolveCollision(std::shared_ptr<object> objTwo)
-{
-	float resitance = 0.5f;
-	float massA = mass;
-	float massB = objTwo->mass;
-
-	velocity = (resitance * massB * (objTwo->velocity - velocity) + massA * velocity + massB * objTwo->velocity) / massA + massB;
-	objTwo->velocity = (resitance * massA * (velocity - objTwo->velocity) + massA * velocity + massB * objTwo->velocity) / massA + massB;
-
-}
-
-
-void object::translateObj(float deltaTime, DIRECTION dir, std::vector<std::shared_ptr<object>>& objects)
-{
-	velocity = moveSpeed * deltaTime;
-	switch (dir)
-	{
-		// STOP FROM GOING TO EDGES
-		case DIRECTION_LEFT:
-		{
-			x -= velocity;
-			for (std::shared_ptr<object> obj : objects)
-			{
-				if (id != obj->id)
-				{
-					if (checkCollisions(obj))
-					{
-						// PREVENT MOVING INSIDE
-						//std::cout << "Collison Detected" << std::endl;
-						//x += velocity;
-						//obj->x -= velocity;
-						resolveCollision(obj);
-						obj->translateObj(deltaTime, dir, objects);
-					}
-				}
-			}
-		}
-		break;
-		case DIRECTION_RIGHT:
-		{
-			x += velocity;
-			for (std::shared_ptr<object> obj : objects)
-			{
-				if (id != obj->id)
-				{
-					if (checkCollisions(obj))
-					{
-						// PREVENT MOVING INSIDE
-						//std::cout << "Collison Detected" << std::endl;
-						//x -= velocity;
-						//obj->x += velocity;
-						resolveCollision(obj);
-						obj->translateObj(deltaTime, dir, objects);
-					}
-				}
-			}
-		}
-		break;
-		case DIRECTION_UP:
-		{
-			y += velocity;
-			for (std::shared_ptr<object> obj : objects)
-			{
-				if (id != obj->id)
-				{
-					
-					if (checkCollisions(obj))
-					{
-						// PREVENT MOVING INSIDE
-						//std::cout << "Collison Detected" << std::endl;
-						//y -= velocity;
-						//obj->y += velocity;
-						resolveCollision(obj);
-						obj->translateObj(deltaTime, dir, objects);
-					}
-				}
-			}
-
-		}
-		break;
-		case DIRECTION_DOWN:
-		{
-			y -= velocity;
-			for (std::shared_ptr<object> obj : objects)
-			{
-				if (id != obj->id)
-				{
-					
-					if (checkCollisions(obj))
-					{
-						// PREVENT MOVING INSIDE
-						//std::cout << "Collison Detected" << std::endl;
-						//y += velocity;
-						//obj->y -= velocity;
-						resolveCollision(obj);
-						obj->translateObj(deltaTime, dir, objects);
-					}
-				}
-			}
-		}
-		break;
-		case DIRECTION_FORWARD:
-		{
-			z += velocity;
-			for (std::shared_ptr<object> obj : objects)
-			{
-				if (id != obj->id)
-				{
-					if (checkCollisions(obj))
-					{
-						// PREVENT MOVING INSIDE
-						//std::cout << "Collison Detected" << std::endl;
-						//z -= velocity;
-						//obj->z += velocity;
-						resolveCollision(obj);
-						obj->translateObj(deltaTime, dir, objects);
-					}
-				}
-			}
-		}
-		break;
-		case DIRECTION_BACK:
-		{
-			z -= velocity;
-			for (std::shared_ptr<object> obj : objects)
-			{
-				if (id != obj->id)
-				{
-					if (checkCollisions(obj))
-					{
-						// PREVENT MOVING INSIDE
-						//std::cout << "Collison Detected" << std::endl;
-						//z += velocity;
-						//obj->z -= velocity;
-						resolveCollision(obj);
-						obj->translateObj(deltaTime, dir, objects);
-					}
-				}
-			}
-		}
-		break;
-	}
-}
